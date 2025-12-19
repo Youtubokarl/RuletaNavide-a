@@ -3,83 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎄 Ruleta Navideña 🎄</title>
+<title>Ruleta Navideña</title>
 
 <style>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#020b1c;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(#081a33,#020b1c);
   color:white;
   text-align:center;
   overflow:hidden;
 }
-
-.section{
-  display:none;
-  width:100vw;
-  height:100vh;
-}
-
-.section.active{
-  display:block;
-}
+h1{margin:15px 0 5px}
+p{margin:0 0 10px}
 
 /* VIDEO */
+#videoSection{
+  width:100vw;
+  height:100vh;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:1000;
+  background:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 video{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-/* FLASHCARD */
-iframe{
-  width:100%;
-  height:100%;
-  border:none;
-}
-
-/* BOTONES */
-button{
-  padding:14px 26px;
-  font-size:18px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.btn-fixed{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:10;
-}
-
-.btn-yellow{
-  background:#f1c40f;
-  color:black;
-}
-
-.btn-green{
-  background:#2ecc71;
-  color:black;
-}
-
-/* RULETA */
+/* WHEEL */
 #wheel-container{
   position:relative;
   width:300px;
   height:300px;
-  margin:30px auto;
+  margin:20px auto;
+  display:none; /* Se muestra después del video/flashcard */
 }
-
-canvas{
-  width:100%;
-  height:100%;
-  border-radius:50%;
-}
+canvas{width:100%;height:100%;border-radius:50%}
 
 #pointer{
   position:absolute;
@@ -92,22 +58,67 @@ canvas{
   border-bottom:30px solid gold;
 }
 
-/* MODAL */
+button{
+  padding:14px 26px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+#spin{background:#f1c40f;color:black;font-weight:bold}
+
 #modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.75);
   display:none;
   align-items:center;
   justify-content:center;
 }
-
 #modal-content{
   background:#0e2a4d;
   padding:20px;
   border-radius:15px;
   width:90%;
-  max-width:420px;
+  max-width:440px;
+  max-height:85vh;
+  display:flex;
+  flex-direction:column;
+}
+
+#rewardText{
+  background:#081a33;
+  padding:15px;
+  border-radius:10px;
+  margin:15px 0;
+  text-align:left;
+  white-space:pre-wrap;
+  font-size:14px;
+  overflow-y:auto;
+  flex:1;
+}
+
+#claim{
+  background:#2ecc71;
+  color:black;
+  font-weight:bold;
+  width:100%;
+}
+
+/* ❄️ NIEVE / EMOJIS */
+.snow{
+  position:fixed;
+  top:-40px;
+  font-size:22px;
+  pointer-events:none;
+  animation:fall linear infinite;
+  z-index:0;
+}
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(360deg);
+    opacity:0;
+  }
 }
 </style>
 </head>
@@ -115,83 +126,111 @@ canvas{
 <body>
 
 <!-- ================= VIDEO ================= -->
-<div id="videoSection" class="section active">
+<div id="videoSection">
   <video id="introVideo" autoplay playsinline muted preload="auto">
     <source src="intro.mp4" type="video/mp4">
-    Tu navegador no soporta la etiqueta de video.
   </video>
 </div>
 
-<!-- ================= FLASHCARD ================= -->
-<div id="flashcardSection" class="section">
-  <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
-  <button class="btn-fixed btn-yellow" onclick="goToRuleta()">Continuar 🎁</button>
-</div>
-
 <!-- ================= RULETA ================= -->
-<div id="ruletaSection" class="section">
-  <h1>🎄 Feliz Navidad 🎄</h1>
-  <p>¡Gira la ruleta y descubre tu premio!</p>
+<h1 id="ruletaTitle" style="display:none;">🎄 FELIZ NAVIDAD 🎄</h1>
+<p id="ruletaMsg" style="display:none;">La <strong>FAMILIA PATIÑO</strong> les desea lo mejor<br>¡Elige tu sorpresa!</p>
 
-  <div id="wheel-container">
-    <div id="pointer"></div>
-    <canvas id="wheel" width="300" height="300"></canvas>
-  </div>
-
-  <button id="spin" class="btn-green">🎡 GIRAR</button>
+<div id="wheel-container">
+  <div id="pointer"></div>
+  <canvas id="wheel" width="300" height="300"></canvas>
 </div>
 
-<!-- ================= AUDIO (SOLO RULETA) ================= -->
-<audio id="bgMusic" loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
+<button id="spin" style="display:none;">🎡 GIRAR</button>
 
-<!-- ================= MODAL ================= -->
 <div id="modal">
   <div id="modal-content">
-    <h2 id="premioTexto"></h2>
-    <button class="btn-yellow" onclick="closeModal()">Cerrar</button>
+    <div id="rewardText"></div>
+    <button id="claim">🎁 OBTENER PREMIO</button>
   </div>
 </div>
 
 <script>
-/* ========= VIDEO → FLASHCARD ========= */
+/* ===== VIDEO AUTOPLAY + TRANSICIÓN ===== */
 const video = document.getElementById("introVideo");
+const wheelContainer = document.getElementById("wheel-container");
+const ruletaTitle = document.getElementById("ruletaTitle");
+const ruletaMsg = document.getElementById("ruletaMsg");
+const spinBtn = document.getElementById("spin");
 
-video.onended = () => {
-  document.getElementById("videoSection").classList.remove("active");
-  document.getElementById("flashcardSection").classList.add("active");
-};
+function mostrarRuleta(){
+  video.parentElement.style.display = "none";
+  wheelContainer.style.display = "block";
+  ruletaTitle.style.display = "block";
+  ruletaMsg.style.display = "block";
+  spinBtn.style.display = "inline-block";
+}
+video.onended = mostrarRuleta;
 
-// Forzar autoplay con fallback en caso de bloqueo
-video.play().catch(() => {
+// fallback si autoplay es bloqueado
+video.play().catch(()=>{
   const btn = document.createElement("button");
   btn.textContent = "▶ Ver video de introducción";
-  btn.className = "btn-fixed btn-yellow";
-  btn.onclick = () => {
+  btn.style.position="fixed";
+  btn.style.top="50%";
+  btn.style.left="50%";
+  btn.style.transform="translate(-50%,-50%)";
+  btn.style.padding="20px";
+  btn.style.fontSize="18px";
+  btn.style.background="#f1c40f";
+  btn.onclick = ()=>{
     video.play();
     btn.remove();
   };
-  document.getElementById("videoSection").appendChild(btn);
+  document.body.appendChild(btn);
 });
 
-/* ========= FLASHCARD → RULETA ========= */
-function goToRuleta(){
-  document.getElementById("flashcardSection").classList.remove("active");
-  document.getElementById("ruletaSection").classList.add("active");
+/* ========= NIEVE + EMOJIS ========= */
+const emojis = ["❄️","🎄","🎁","⭐","🎅"];
+setInterval(()=>{
+  const e=document.createElement("div");
+  e.className="snow";
+  e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+  e.style.left=Math.random()*100+"vw";
+  e.style.animationDuration=(4+Math.random()*5)+"s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),9000);
+},350);
 
-  const music = document.getElementById("bgMusic");
-  music.volume = 0.6;
-  music.play().catch(()=>{});
-}
+/* ========= WHATSAPP ========= */
+const whatsappAdmin="51957811810";
 
-/* ========= RULETA ========= */
+/* ========= IPTV INFO ========= */
+const IPTV_INFO = `🎬 IPTV Server Information
+
+🌍 M3U Link:
+http://tv.proyectox.vip:8080/get.php?username=Drazun23lgdh&password=q65M5nwa2A&type=m3u_plus&output=ts
+
+🔗 Host URL:
+http://tv.proyectox.vip:8080
+
+👤 Username:
+Drazun23lgdh
+
+🔑 Password:
+q65M5nwa2A
+
+📡 Server:
+http://tv.proyectox.vip:8080
+
+📍 Location:
+Unknown
+
+📅 Expiry:
+December 30, 2025 at 19:10 GMT-05:00`;
+
+/* ========= PREMIOS ========= */
 const premios=[
-  "📺 IPTV Premium",
-  "📲 Magis TV",
-  "🎁 Premio Sorpresa",
-  "📘 Curso",
-  "📚 Biblioteca"
+  {nombre:"📺 IPTV Premium 6 meses",tipo:"iptv"},
+  {nombre:"📲 Magis TV Android",tipo:"contacto"},
+  {nombre:"📘 Curso de Inglés Completo",tipo:"link",enlace:"https://drive.google.com/drive/folders/1mXBer5mMfp2bsuhNnNuQEaBJj8NqoCay"},
+  {nombre:"📚 Biblioteca Virtual",tipo:"link",enlace:"https://drive.google.com/drive/folders/13_VgENw6lk4y7SdniVQFxncSkJl60zSB"},
+  {nombre:"🎁 Premio Sorpresa",tipo:"contacto"}
 ];
 
 const colores=["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6"];
@@ -199,6 +238,7 @@ const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 const c=canvas.width/2;
 let angulo=0;
+let premioActual=null;
 
 function dibujarRuleta(){
   const paso=2*Math.PI/premios.length;
@@ -208,36 +248,69 @@ function dibujarRuleta(){
     ctx.arc(c,c,c,i*paso,(i+1)*paso);
     ctx.fillStyle=colores[i];
     ctx.fill();
-
     ctx.save();
     ctx.translate(c,c);
     ctx.rotate(i*paso+paso/2);
     ctx.fillStyle="white";
     ctx.font="bold 14px Arial";
     ctx.textAlign="center";
-    ctx.fillText(premios[i], c-90, 5);
+    ctx.fillText(premios[i].nombre, c-85, 5);
     ctx.restore();
   }
 }
 dibujarRuleta();
 
-document.getElementById("spin").onclick=()=>{
-  const vueltas=360*(4+Math.random()*3);
+/* ===== GIRAR RULETA ===== */
+spinBtn.onclick=()=>{
+  const vueltas=360*(5+Math.random()*4);
   angulo+=vueltas;
   canvas.style.transition="transform 4s ease-out";
   canvas.style.transform=`rotate(${angulo}deg)`;
 
   setTimeout(()=>{
     const idx=Math.floor(((360-(angulo%360))%360)/(360/premios.length));
-    document.getElementById("premioTexto").innerText =
-      "🎉 ¡Felicidades!\n\nHas ganado:\n" + premios[idx];
+    premioActual=premios[idx];
+
+    let texto=`🎉 ¡FELICIDADES! 🎉
+
+Has ganado:
+${premioActual.nombre}
+
+🎄 Feliz Navidad 🎄
+Jesús Patiño & Familia`;
+
+    if(premioActual.tipo==="link") texto+=`\n\n🔗 Tu acceso:\n${premioActual.enlace}`;
+    if(premioActual.tipo==="iptv") texto+=`\n\n${IPTV_INFO}`;
+    if(premioActual.tipo==="contacto") texto+=`\n\n📩 Escríbeme y te entrego tu premio.`;
+
+    document.getElementById("rewardText").innerText=texto;
     document.getElementById("modal").style.display="flex";
+
   },4000);
 };
 
-function closeModal(){
-  document.getElementById("modal").style.display="none";
-}
+/* ===== OBTENER PREMIO / WHATSAPP ===== */
+document.getElementById("claim").onclick = () => {
+  let msg = `Hola 👋
+He ganado el premio:
+${premioActual.nombre}`;
+
+  if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
+    msg += `
+¡Quiero mi premio!`;
+  }
+
+  msg += `
+
+Gracias 🙌
+Feliz Navidad 🎄
+Jesús Patiño & Familia`;
+
+  if (premioActual.tipo === "link") msg += `\n\n${premioActual.enlace}`;
+  if (premioActual.tipo === "iptv") msg += `\n\n${IPTV_INFO}`;
+
+  window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
+};
 </script>
 
 </body>
