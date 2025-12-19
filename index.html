@@ -116,8 +116,9 @@ canvas{
 
 <!-- ================= VIDEO ================= -->
 <div id="videoSection" class="section active">
-  <video id="introVideo" autoplay playsinline>
+  <video id="introVideo" autoplay playsinline muted preload="auto">
     <source src="intro.mp4" type="video/mp4">
+    Tu navegador no soporta la etiqueta de video.
   </video>
 </div>
 
@@ -161,6 +162,18 @@ video.onended = () => {
   document.getElementById("videoSection").classList.remove("active");
   document.getElementById("flashcardSection").classList.add("active");
 };
+
+// Forzar autoplay con fallback en caso de bloqueo
+video.play().catch(() => {
+  const btn = document.createElement("button");
+  btn.textContent = "▶ Ver video de introducción";
+  btn.className = "btn-fixed btn-yellow";
+  btn.onclick = () => {
+    video.play();
+    btn.remove();
+  };
+  document.getElementById("videoSection").appendChild(btn);
+});
 
 /* ========= FLASHCARD → RULETA ========= */
 function goToRuleta(){
