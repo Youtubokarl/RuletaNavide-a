@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎄 Ruleta Navideña 🎄</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#020b1c;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+}
+
+.section{
+  display:none;
+  width:100vw;
+  height:100vh;
+}
+
+.section.active{
+  display:block;
+}
+
+/* VIDEO */
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* FLASHCARD */
+iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+/* BOTONES */
+button{
+  padding:14px 26px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.btn-fixed{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+}
+
+.btn-yellow{
+  background:#f1c40f;
+  color:black;
+}
+
+.btn-green{
+  background:#2ecc71;
+  color:black;
+}
+
+/* RULETA */
+#wheel-container{
+  position:relative;
+  width:300px;
+  height:300px;
+  margin:30px auto;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+}
+
+#pointer{
+  position:absolute;
+  top:-15px;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:15px solid transparent;
+  border-right:15px solid transparent;
+  border-bottom:30px solid gold;
+}
+
+/* MODAL */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+#modal-content{
+  background:#0e2a4d;
+  padding:20px;
+  border-radius:15px;
+  width:90%;
+  max-width:420px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= VIDEO ================= -->
+<div id="videoSection" class="section active">
+  <video id="introVideo" autoplay playsinline>
+    <source src="intro.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- ================= FLASHCARD ================= -->
+<div id="flashcardSection" class="section">
+  <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
+  <button class="btn-fixed btn-yellow" onclick="goToRuleta()">Continuar 🎁</button>
+</div>
+
+<!-- ================= RULETA ================= -->
+<div id="ruletaSection" class="section">
+  <h1>🎄 Feliz Navidad 🎄</h1>
+  <p>¡Gira la ruleta y descubre tu premio!</p>
+
+  <div id="wheel-container">
+    <div id="pointer"></div>
+    <canvas id="wheel" width="300" height="300"></canvas>
+  </div>
+
+  <button id="spin" class="btn-green">🎡 GIRAR</button>
+</div>
+
+<!-- ================= AUDIO (SOLO RULETA) ================= -->
+<audio id="bgMusic" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ================= MODAL ================= -->
+<div id="modal">
+  <div id="modal-content">
+    <h2 id="premioTexto"></h2>
+    <button class="btn-yellow" onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+/* ========= VIDEO → FLASHCARD ========= */
+const video = document.getElementById("introVideo");
+
+video.onended = () => {
+  document.getElementById("videoSection").classList.remove("active");
+  document.getElementById("flashcardSection").classList.add("active");
+};
+
+/* ========= FLASHCARD → RULETA ========= */
+function goToRuleta(){
+  document.getElementById("flashcardSection").classList.remove("active");
+  document.getElementById("ruletaSection").classList.add("active");
+
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.6;
+  music.play().catch(()=>{});
+}
+
+/* ========= RULETA ========= */
+const premios=[
+  "📺 IPTV Premium",
+  "📲 Magis TV",
+  "🎁 Premio Sorpresa",
+  "📘 Curso",
+  "📚 Biblioteca"
+];
+
+const colores=["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6"];
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+const c=canvas.width/2;
+let angulo=0;
+
+function dibujarRuleta(){
+  const paso=2*Math.PI/premios.length;
+  for(let i=0;i<premios.length;i++){
+    ctx.beginPath();
+    ctx.moveTo(c,c);
+    ctx.arc(c,c,c,i*paso,(i+1)*paso);
+    ctx.fillStyle=colores[i];
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(c,c);
+    ctx.rotate(i*paso+paso/2);
+    ctx.fillStyle="white";
+    ctx.font="bold 14px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(premios[i], c-90, 5);
+    ctx.restore();
+  }
+}
+dibujarRuleta();
+
+document.getElementById("spin").onclick=()=>{
+  const vueltas=360*(4+Math.random()*3);
+  angulo+=vueltas;
+  canvas.style.transition="transform 4s ease-out";
+  canvas.style.transform=`rotate(${angulo}deg)`;
+
+  setTimeout(()=>{
+    const idx=Math.floor(((360-(angulo%360))%360)/(360/premios.length));
+    document.getElementById("premioTexto").innerText =
+      "🎉 ¡Felicidades!\n\nHas ganado:\n" + premios[idx];
+    document.getElementById("modal").style.display="flex";
+  },4000);
+};
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+</script>
+
+</body>
+</html>
