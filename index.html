@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruleta Navideña</title>
 
-<!-- Fuente elegante para títulos y mensajes -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
 <style>
@@ -66,7 +65,7 @@ video{
   color:white;
 }
 
-/* COPOS DE NIEVE INICIO */
+/* COPOS DE NIEVE */
 .snowIntro{
   position:fixed;
   top:-40px;
@@ -107,7 +106,6 @@ video{
   border-radius:10px;
   cursor:pointer;
 }
-.btn-fixed{position:fixed; bottom:20px; left:50%; transform:translateX(-50%);}
 
 /* RULETA */
 #ruletaWrapper{
@@ -115,9 +113,7 @@ video{
   width:100%;
   min-height:100vh;
   padding:10px 0;
-  box-sizing:border-box;
   overflow-y:auto;
-  -webkit-overflow-scrolling: touch;
   background: linear-gradient(to bottom, #020b1c, #081a33);
 }
 
@@ -125,24 +121,20 @@ video{
   font-family:'Dancing Script', cursive;
   font-size:38px;
   color:red;
-  text-shadow: 2px 2px 4px white;
   margin:15px 0 5px;
 }
 
 #ruletaMsg{
-  font-family: 'Roboto', sans-serif;
   font-size:18px;
   font-style:italic;
   margin-bottom:15px;
-  color:white;
 }
 
-/* WHEEL */
 #wheel-container{
   position:relative;
   width:300px;
   height:300px;
-  margin:0 auto 40px auto;
+  margin:0 auto 40px;
 }
 canvas{width:100%;height:100%;border-radius:50%}
 
@@ -151,7 +143,6 @@ canvas{width:100%;height:100%;border-radius:50%}
   top:-15px;
   left:50%;
   transform:translateX(-50%);
-  width:0;height:0;
   border-left:15px solid transparent;
   border-right:15px solid transparent;
   border-bottom:30px solid gold;
@@ -164,65 +155,37 @@ canvas{width:100%;height:100%;border-radius:50%}
   border-radius:12px;
   cursor:pointer;
   background:#f1c40f;
-  color:black;
   font-weight:bold;
-}
-
-/* MODAL */
-#modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:5000;
-}
-#modal-content{
-  background:#0e2a4d;
-  padding:20px;
-  border-radius:15px;
-  width:90%;
-  max-width:440px;
-  max-height:85vh;
-  display:flex;
-  flex-direction:column;
-}
-
-#rewardText{
-  background:#081a33;
-  padding:15px;
-  border-radius:10px;
-  margin:15px 0;
-  text-align:left;
-  white-space:pre-wrap;
-  font-size:14px;
-  overflow-y:auto;
-  flex:1;
-}
-
-#claim{
-  background:#2ecc71;
-  color:black;
-  font-weight:bold;
-  width:100%;
 }
 </style>
 </head>
+
 <body>
+
+<!-- AUDIO INICIO -->
+<audio id="introMusic" loop autoplay>
+  <source src="MusicaInicio.mp3" type="audio/mpeg">
+</audio>
+
+<!-- AUDIO RULETA -->
+<audio id="bgMusic" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
 
 <!-- MENSAJE INICIAL -->
 <div id="introMessage">
   <h1>Una Feliz Navidad y un Próspero Año Nuevo</h1>
-  <p>La familia Patiño Quintana les desea la mejor de las suertes en el juego de la Ruleta Navideña.<br>
-  Recuerden que el primer y único ganador de los 10 soles es quien salga primero entre todos los participantes.<br>
-  Además, deben hacerme llegar su mensaje por WhatsApp.<br>
-  ¡Suerte a todos!</p>
+  <p>
+    La familia Patiño Quintana les desea la mejor de las suertes en el juego de la Ruleta Navideña.<br>
+    Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>
+    Además, deben hacerme llegar su mensaje por WhatsApp.<br>
+    ¡Suerte a todos!
+  </p>
 </div>
 
 <!-- VIDEO -->
 <div id="videoSection" style="display:none">
-  <video id="introVideo" autoplay playsinline muted preload="auto">
+  <video id="introVideo" autoplay muted playsinline>
     <source src="intro.mp4" type="video/mp4">
   </video>
 </div>
@@ -231,13 +194,12 @@ canvas{width:100%;height:100%;border-radius:50%}
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
   <button id="skipGame">Saltar Juego e ir a jugar la ruleta 🚀</button>
-  
 </div>
 
 <!-- RULETA -->
 <div id="ruletaWrapper">
   <h1 id="ruletaTitle">🎄 Una Feliz Navidad y un Próspero Año Nuevo 🎄</h1>
-  <p id="ruletaMsg">La familia Patiño Quintana les desea la mejor de las suertes en el juego de la ruleta.<br>Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>Suerte a todos!</p>
+  <p id="ruletaMsg">La familia Patiño Quintana les desea la mejor de las suertes.</p>
 
   <div id="wheel-container">
     <div id="pointer"></div>
@@ -247,166 +209,50 @@ canvas{width:100%;height:100%;border-radius:50%}
   <button id="spin">🎡 GIRAR</button>
 </div>
 
-<audio id="bgMusic" loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
-
-<div id="modal">
-  <div id="modal-content">
-    <div id="rewardText"></div>
-    <button id="claim">🎁 OBTENER PREMIO</button>
-  </div>
-</div>
-
 <script>
-/* COPOS DE NIEVE MENSAJE INICIAL */
-const emojisIntro = ["❄️"];
+/* NIEVE */
 setInterval(()=>{
   const e=document.createElement("div");
   e.className="snowIntro";
-  e.innerText=emojisIntro[Math.floor(Math.random()*emojisIntro.length)];
+  e.innerText="❄️";
   e.style.left=Math.random()*100+"vw";
   e.style.animationDuration=(4+Math.random()*5)+"s";
   document.body.appendChild(e);
   setTimeout(()=>e.remove(),9000);
 },350);
 
-/* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
-const introMessage = document.getElementById("introMessage");
-const videoSection = document.getElementById("videoSection");
-const video = document.getElementById("introVideo");
-const flashcardSection = document.getElementById("flashcardSection");
-const ruletaWrapper = document.getElementById("ruletaWrapper");
-const spinBtn = document.getElementById("spin");
-const bgMusic = document.getElementById("bgMusic");
-const skipBtn = document.getElementById("skipGame");
+/* SECUENCIA */
+const introMusic=document.getElementById("introMusic");
+const bgMusic=document.getElementById("bgMusic");
+const introMessage=document.getElementById("introMessage");
+const videoSection=document.getElementById("videoSection");
+const video=document.getElementById("introVideo");
+const flashcardSection=document.getElementById("flashcardSection");
+const ruletaWrapper=document.getElementById("ruletaWrapper");
 
-// Mostrar video después de 15 segundos
 setTimeout(()=>{
   introMessage.style.display="none";
   videoSection.style.display="block";
-  video.play().catch(()=>{});
 },15000);
 
-video.onended = () => {
+video.onended=()=>{
   videoSection.style.display="none";
   flashcardSection.style.display="block";
 };
 
-/* IR A RULETA DESDE FLASHCARD */
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
+
+  introMusic.pause();
+  introMusic.currentTime=0;
+
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 }
 
-/* SALTAR JUEGO BOTÓN */
-skipBtn.onclick = goToRuleta;
-
-/* PREMIOS */
-const premios=[
-  {nombre:"📺 IPTV Premium 6 meses",tipo:"iptv"},
-  {nombre:"📲 Magis TV Android",tipo:"contacto"},
-  {nombre:"📘 Curso de Inglés Completo",tipo:"link",enlace:"https://drive.google.com/drive/folders/1mXBer5mMfp2bsuhNnNuQEaBJj8NqoCay"},
-  {nombre:"📚 Biblioteca Virtual",tipo:"link",enlace:"https://drive.google.com/drive/folders/13_VgENw6lk4y7SdniVQFxncSkJl60zSB"},
-  {nombre:"🎁 Premio Sorpresa",tipo:"contacto"},
-  {nombre:"💵 Ganaste 10 soles",tipo:"contacto"}
-];
-
-const colores=["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6","#ff69b4"];
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
-const c=canvas.width/2;
-let angulo=0;
-let premioActual=null;
-
-function dibujarRuleta(){
-  const paso=2*Math.PI/premios.length;
-  for(let i=0;i<premios.length;i++){
-    ctx.beginPath();
-    ctx.moveTo(c,c);
-    ctx.arc(c,c,c,i*paso,(i+1)*paso);
-    ctx.fillStyle=colores[i];
-    ctx.fill();
-    ctx.save();
-    ctx.translate(c,c);
-    ctx.rotate(i*paso+paso/2);
-    ctx.fillStyle="white";
-    ctx.font="bold 14px Arial";
-    ctx.textAlign="center";
-    ctx.fillText(premios[i].nombre, c-85, 5);
-    ctx.restore();
-  }
-}
-dibujarRuleta();
-
-/* BLOQUEO DE RULETA: SOLO UNA VEZ POR PERSONA */
-if(localStorage.getItem("ruleta_jugada")) {
-    spinBtn.disabled = true;
-    spinBtn.innerText = "Ya jugaste, lo siento";
-}
-
-/* GIRAR RULETA */
-spinBtn.onclick=()=>{
-  // Guardar que ya jugó
-  if(!localStorage.getItem("ruleta_jugada")) {
-      localStorage.setItem("ruleta_jugada", "true");
-  }
-
-  const vueltas=360*(5+Math.random()*4);
-  angulo+=vueltas;
-  canvas.style.transition="transform 4s ease-out";
-  canvas.style.transform=`rotate(${angulo}deg)`;
-
-  setTimeout(()=>{
-    const idx=Math.floor(((360-(angulo%360))%360)/(360/premios.length));
-    premioActual=premios[idx];
-
-    let texto=`🎉 ¡FELICIDADES! 🎉
-
-Has ganado:
-${premioActual.nombre}
-
-🎄 Feliz Navidad 🎄
-Jesús Patiño & Familia`;
-
-    if(premioActual.tipo==="link") texto+=`\n\n🔗 Tu acceso:\n${premioActual.enlace}`;
-    if(premioActual.tipo==="iptv") texto+=`\n\n🎬 IPTV Server Information...`;
-    if(premioActual.nombre === "💵 Ganaste 10 soles") texto += `\n\n📩 Por favor ingresa tu número de Yape para recibirlo.`;
-    if(premioActual.tipo==="contacto" && premioActual.nombre !== "💵 Ganaste 10 soles") texto+=`\n\n📩 Escríbeme y te entrego tu premio.`;
-
-    document.getElementById("rewardText").innerText=texto;
-    document.getElementById("modal").style.display="flex";
-
-  },4000);
-};
-
-/* OBTENER PREMIO / WHATSAPP */
-const whatsappAdmin="51957811810";
-document.getElementById("claim").onclick = () => {
-  let msg = `Hola 👋
-He ganado el premio:
-${premioActual.nombre}`;
-
-  if(premioActual.nombre==="💵 Ganaste 10 soles"){
-    msg += `
-¡Por favor, pégame a este número para enviarme los soles!`;
-  } else if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
-    msg += `
-¡Quiero mi premio!`;
-  }
-
-  msg += `
-
-Gracias 🙌
-Feliz Navidad 🎄
-Jesús Patiño & Familia`;
-
-  if(premioActual.tipo === "link") msg += `\n\n${premioActual.enlace}`;
-
-  window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
-};
+document.getElementById("skipGame").onclick=goToRuleta;
 </script>
+
 </body>
 </html>
