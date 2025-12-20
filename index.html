@@ -246,6 +246,10 @@ canvas{width:100%;height:100%;border-radius:50%}
   <button id="spin">🎡 GIRAR</button>
 </div>
 
+<!-- AUDIO: inicio y ruleta -->
+<audio id="introMusic" loop preload="auto">
+  <source src="MusicaInicio.mp3" type="audio/mpeg">
+</audio>
 <audio id="bgMusic" loop>
   <source src="musica.mp3" type="audio/mpeg">
 </audio>
@@ -270,7 +274,7 @@ setInterval(()=>{
   setTimeout(()=>e.remove(),9000);
 },350);
 
-/* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
+/* ELEMENTOS PRINCIPALES */
 const introMessage = document.getElementById("introMessage");
 const videoSection = document.getElementById("videoSection");
 const video = document.getElementById("introVideo");
@@ -278,35 +282,24 @@ const flashcardSection = document.getElementById("flashcardSection");
 const ruletaWrapper = document.getElementById("ruletaWrapper");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
+const introMusic = document.getElementById("introMusic");
 const skipBtn = document.getElementById("skipGame");
 
-/* 🔊 DESBLOQUEO DE AUDIO REAL (ANDROID / CHROME / GITHUB PAGES) */
+/* DESBLOQUEO AUDIO INICIO EN MÓVILES */
 let audioUnlocked = false;
-
-function unlockAudio(){
+function unlockAudioOnce(){
   if(audioUnlocked) return;
   audioUnlocked = true;
-
-  bgMusic.load();          // 🔑 CLAVE: reinicia buffer
-  bgMusic.currentTime = 0;
-  bgMusic.volume = 0.6;
-
-  const p = bgMusic.play();
-  if (p !== undefined) {
-    p.catch(()=>{});
-  }
-
-  document.removeEventListener("pointerdown", unlockAudio);
-  document.removeEventListener("touchstart", unlockAudio);
-  document.removeEventListener("click", unlockAudio);
+  introMusic.currentTime = 0;
+  introMusic.volume = 0.6;
+  introMusic.play().catch(()=>{});
+  document.removeEventListener("touchstart", unlockAudioOnce);
+  document.removeEventListener("click", unlockAudioOnce);
 }
+document.addEventListener("touchstart", unlockAudioOnce, { once:true });
+document.addEventListener("click", unlockAudioOnce, { once:true });
 
-/* Eventos que Android SÍ reconoce */
-document.addEventListener("pointerdown", unlockAudio, { passive:true });
-document.addEventListener("touchstart", unlockAudio, { passive:true });
-document.addEventListener("click", unlockAudio, { passive:true });
-
-// Mostrar video después de 15 segundos
+/* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
 setTimeout(()=>{
   introMessage.style.display="none";
   videoSection.style.display="block";
@@ -322,6 +315,12 @@ video.onended = () => {
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
+
+  // Detener música de inicio
+  introMusic.pause();
+  introMusic.currentTime = 0;
+
+  // Activar música de la ruleta
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 }
