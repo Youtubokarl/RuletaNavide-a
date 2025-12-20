@@ -65,7 +65,7 @@ video{
   color:white;
 }
 
-/* COPOS DE NIEVE */
+/* COPOS */
 .snowIntro{
   position:fixed;
   top:-40px;
@@ -86,7 +86,6 @@ video{
   display:none;
   width:100%;
   height:100vh;
-  position:relative;
 }
 #flashcardSection iframe{
   width:100%;
@@ -113,7 +112,7 @@ video{
   width:100%;
   min-height:100vh;
   padding:10px 0;
-  overflow-y:auto;
+  box-sizing:border-box;
   background: linear-gradient(to bottom, #020b1c, #081a33);
 }
 
@@ -121,20 +120,14 @@ video{
   font-family:'Dancing Script', cursive;
   font-size:38px;
   color:red;
-  margin:15px 0 5px;
-}
-
-#ruletaMsg{
-  font-size:18px;
-  font-style:italic;
-  margin-bottom:15px;
+  text-shadow: 2px 2px 4px white;
 }
 
 #wheel-container{
   position:relative;
   width:300px;
   height:300px;
-  margin:0 auto 40px;
+  margin:20px auto;
 }
 canvas{width:100%;height:100%;border-radius:50%}
 
@@ -143,6 +136,7 @@ canvas{width:100%;height:100%;border-radius:50%}
   top:-15px;
   left:50%;
   transform:translateX(-50%);
+  width:0;height:0;
   border-left:15px solid transparent;
   border-right:15px solid transparent;
   border-bottom:30px solid gold;
@@ -155,37 +149,58 @@ canvas{width:100%;height:100%;border-radius:50%}
   border-radius:12px;
   cursor:pointer;
   background:#f1c40f;
+  color:black;
   font-weight:bold;
+}
+
+/* MODAL */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:5000;
+}
+#modal-content{
+  background:#0e2a4d;
+  padding:20px;
+  border-radius:15px;
+  width:90%;
+  max-width:440px;
+}
+#rewardText{
+  background:#081a33;
+  padding:15px;
+  border-radius:10px;
+  margin:15px 0;
+  text-align:left;
+  white-space:pre-wrap;
+}
+#claim{
+  background:#2ecc71;
+  color:black;
+  font-weight:bold;
+  width:100%;
 }
 </style>
 </head>
-
 <body>
 
-<!-- AUDIO INICIO -->
-<audio id="introMusic" loop autoplay>
-  <source src="MusicaInicio.mp3" type="audio/mpeg">
-</audio>
-
-<!-- AUDIO RULETA -->
-<audio id="bgMusic" loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
-
-<!-- MENSAJE INICIAL -->
+<!-- MENSAJE -->
 <div id="introMessage">
   <h1>Una Feliz Navidad y un Próspero Año Nuevo</h1>
   <p>
-    La familia Patiño Quintana les desea la mejor de las suertes en el juego de la Ruleta Navideña.<br>
-    Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>
-    Además, deben hacerme llegar su mensaje por WhatsApp.<br>
+    La familia Patiño Quintana les desea la mejor de las suertes en la Ruleta Navideña.<br>
+    Recuerden que el primer ganador de los 10 soles es el primero que salga.<br>
     ¡Suerte a todos!
   </p>
 </div>
 
 <!-- VIDEO -->
 <div id="videoSection" style="display:none">
-  <video id="introVideo" autoplay muted playsinline>
+  <video id="introVideo" autoplay playsinline muted preload="auto">
     <source src="intro.mp4" type="video/mp4">
   </video>
 </div>
@@ -193,24 +208,45 @@ canvas{width:100%;height:100%;border-radius:50%}
 <!-- FLASHCARD -->
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
-  <button id="skipGame">Saltar Juego e ir a jugar la ruleta 🚀</button>
+  <button id="skipGame">Saltar Juego 🚀</button>
 </div>
 
 <!-- RULETA -->
 <div id="ruletaWrapper">
-  <h1 id="ruletaTitle">🎄 Una Feliz Navidad y un Próspero Año Nuevo 🎄</h1>
-  <p id="ruletaMsg">La familia Patiño Quintana les desea la mejor de las suertes.</p>
-
+  <h1 id="ruletaTitle">🎄 Ruleta Navideña 🎄</h1>
   <div id="wheel-container">
     <div id="pointer"></div>
     <canvas id="wheel" width="300" height="300"></canvas>
   </div>
-
   <button id="spin">🎡 GIRAR</button>
 </div>
 
+<!-- AUDIO -->
+<audio id="introMusic" loop autoplay>
+  <source src="MusicaInicio.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="bgMusic" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MODAL -->
+<div id="modal">
+  <div id="modal-content">
+    <div id="rewardText"></div>
+    <button id="claim">🎁 OBTENER PREMIO</button>
+  </div>
+</div>
+
 <script>
-/* NIEVE */
+/* AUDIO */
+const introMusic = document.getElementById("introMusic");
+const bgMusic = document.getElementById("bgMusic");
+
+introMusic.volume = 0.6;
+introMusic.play().catch(()=>{});
+
+/* COPOS */
 setInterval(()=>{
   const e=document.createElement("div");
   e.className="snowIntro";
@@ -222,37 +258,64 @@ setInterval(()=>{
 },350);
 
 /* SECUENCIA */
-const introMusic=document.getElementById("introMusic");
-const bgMusic=document.getElementById("bgMusic");
-const introMessage=document.getElementById("introMessage");
-const videoSection=document.getElementById("videoSection");
-const video=document.getElementById("introVideo");
-const flashcardSection=document.getElementById("flashcardSection");
-const ruletaWrapper=document.getElementById("ruletaWrapper");
+const introMessage = document.getElementById("introMessage");
+const videoSection = document.getElementById("videoSection");
+const video = document.getElementById("introVideo");
+const flashcardSection = document.getElementById("flashcardSection");
+const ruletaWrapper = document.getElementById("ruletaWrapper");
 
 setTimeout(()=>{
   introMessage.style.display="none";
   videoSection.style.display="block";
+  video.play().catch(()=>{});
 },15000);
 
-video.onended=()=>{
+video.onended = ()=>{
   videoSection.style.display="none";
   flashcardSection.style.display="block";
 };
 
+/* IR A RULETA */
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
 
   introMusic.pause();
-  introMusic.currentTime=0;
+  introMusic.currentTime = 0;
 
-  bgMusic.volume=0.6;
+  bgMusic.volume = 0.6;
   bgMusic.play().catch(()=>{});
 }
+document.getElementById("skipGame").onclick = goToRuleta;
 
-document.getElementById("skipGame").onclick=goToRuleta;
+/* RULETA */
+const premios=[
+  "📺 IPTV 6 meses","📲 Magis TV","📘 Curso Inglés","📚 Biblioteca","🎁 Sorpresa","💵 10 soles"
+];
+const colores=["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6","#ff69b4"];
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+const c=canvas.width/2;
+
+function dibujar(){
+  const paso=2*Math.PI/premios.length;
+  for(let i=0;i<premios.length;i++){
+    ctx.beginPath();
+    ctx.moveTo(c,c);
+    ctx.arc(c,c,c,i*paso,(i+1)*paso);
+    ctx.fillStyle=colores[i];
+    ctx.fill();
+    ctx.save();
+    ctx.translate(c,c);
+    ctx.rotate(i*paso+paso/2);
+    ctx.fillStyle="white";
+    ctx.font="bold 14px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(premios[i],c-80,5);
+    ctx.restore();
+  }
+}
+dibujar();
 </script>
-
 </body>
 </html>
