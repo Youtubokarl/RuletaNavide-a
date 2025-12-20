@@ -45,11 +45,27 @@ video{
   display:none;
   width:100vw;
   height:100vh;
+  position:relative;
 }
 #flashcardSection iframe{
   width:100%;
   height:100%;
   border:none;
+}
+
+/* SALTAR JUEGO */
+#skipGame{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:2000;
+  padding:12px 20px;
+  font-size:16px;
+  background:red;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 /* WHEEL */
@@ -161,6 +177,7 @@ button{
 <!-- FLASHCARD -->
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
+  <button id="skipGame">Saltar Juego e ir a jugar la ruleta 🚀</button>
   <button class="btn-fixed btn-yellow" onclick="goToRuleta()">Continuar 🎁</button>
 </div>
 
@@ -195,22 +212,26 @@ const ruletaTitle = document.getElementById("ruletaTitle");
 const ruletaMsg = document.getElementById("ruletaMsg");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
+const skipBtn = document.getElementById("skipGame");
 
 video.onended = () => {
   video.parentElement.style.display="none";
   flashcardSection.style.display="block";
 };
 
+/* IR A RULETA DESDE FLASHCARD */
 function goToRuleta(){
   flashcardSection.style.display="none";
   wheelContainer.style.display="block";
   ruletaTitle.style.display="block";
   ruletaMsg.style.display="block";
   spinBtn.style.display="inline-block";
-  // Reproducir música de fondo
   bgMusic.volume = 0.6;
   bgMusic.play().catch(()=>{});
 }
+
+/* SALTAR JUEGO BOTÓN */
+skipBtn.onclick = goToRuleta;
 
 /* NIEVE + EMOJIS */
 const emojis = ["❄️","🎄","🎁","⭐","🎅"];
