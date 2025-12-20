@@ -280,19 +280,31 @@ const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
 const skipBtn = document.getElementById("skipGame");
 
-/* 🔊 DESBLOQUEO DE AUDIO POR CUALQUIER TOQUE */
+/* 🔊 DESBLOQUEO DE AUDIO REAL (ANDROID / CHROME / GITHUB PAGES) */
 let audioUnlocked = false;
+
 function unlockAudio(){
   if(audioUnlocked) return;
   audioUnlocked = true;
+
+  bgMusic.load();          // 🔑 CLAVE: reinicia buffer
   bgMusic.currentTime = 0;
   bgMusic.volume = 0.6;
-  bgMusic.play().catch(()=>{});
-  document.removeEventListener("click", unlockAudio);
+
+  const p = bgMusic.play();
+  if (p !== undefined) {
+    p.catch(()=>{});
+  }
+
+  document.removeEventListener("pointerdown", unlockAudio);
   document.removeEventListener("touchstart", unlockAudio);
+  document.removeEventListener("click", unlockAudio);
 }
-document.addEventListener("click", unlockAudio);
-document.addEventListener("touchstart", unlockAudio);
+
+/* Eventos que Android SÍ reconoce */
+document.addEventListener("pointerdown", unlockAudio, { passive:true });
+document.addEventListener("touchstart", unlockAudio, { passive:true });
+document.addEventListener("click", unlockAudio, { passive:true });
 
 // Mostrar video después de 15 segundos
 setTimeout(()=>{
