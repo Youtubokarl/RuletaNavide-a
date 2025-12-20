@@ -359,7 +359,7 @@ function goToRuleta(){
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 
-  /* VERIFICAR HORA PARA HABILITAR BOTÓN
+  // VERIFICAR HORA PARA HABILITAR BOTÓN
   const ahora = new Date();
   const fechaHabil = new Date('2025-12-20T21:00:00-05:00'); // 9pm hora Perú
   if(ahora < fechaHabil){
@@ -370,7 +370,7 @@ function goToRuleta(){
     spinBtn.disabled = false;
     timeMessage.style.display = 'none';
   }
-}*/
+}
 
 /* SALTAR JUEGO BOTÓN */
 skipBtn.onclick = goToRuleta;
