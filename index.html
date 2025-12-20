@@ -37,19 +37,20 @@ video{
   object-fit:cover;
 }
 
-/* INTRO MODAL */
-#introModal{
+/* MENSAJE NAVIDEÑO */
+#welcomeMessage{
+  display:none;
   position:fixed;
   inset:0;
   background:linear-gradient(to bottom,#ff4d4d,#800000);
   color:white;
+  z-index:2000;
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:3000;
   padding:20px;
 }
-#introModalContent{
+#welcomeContent{
   background:rgba(0,0,0,0.6);
   padding:25px;
   border-radius:15px;
@@ -57,11 +58,11 @@ video{
   text-align:center;
   font-family:'Great Vibes', cursive;
 }
-#introModalContent p{
+#welcomeContent p{
   font-size:20px;
   line-height:1.4;
 }
-#introModalContent button{
+#welcomeContent button{
   margin-top:15px;
   padding:12px 20px;
   font-size:18px;
@@ -84,7 +85,6 @@ video{
   height:100%;
   border:none;
 }
-/* BOTÓN SALTAR JUEGO */
 #skipGame{
   position:fixed;
   top:20px;
@@ -193,7 +193,6 @@ button{
 }
 </style>
 </head>
-
 <body>
 
 <!-- VIDEO -->
@@ -203,9 +202,9 @@ button{
   </video>
 </div>
 
-<!-- INTRO MODAL -->
-<div id="introModal">
-  <div id="introModalContent">
+<!-- MENSAJE NAVIDEÑO -->
+<div id="welcomeMessage">
+  <div id="welcomeContent">
     <p>
 🎄 ¡Hola, queridos amigos! 🎄<br><br>
 Jesús Patiño y su familia les desean una Feliz Navidad y un próspero Año Nuevo. 💖<br><br>
@@ -213,7 +212,7 @@ Pueden jugar el "Misterio del Taller de Santa" y descubrir sorpresas. Si lo dese
 Solo la primera persona que gane este premio lo recibirá vía Yape. El resto podrá participar y obtener los demás premios.<br><br>
 ¡Diviértanse y celebremos juntos! 🎁✨
     </p>
-    <button id="startGame">¡Vamos a jugar! 🎉</button>
+    <button id="goFlashcard">Ir a jugar 🎉</button>
   </div>
 </div>
 
@@ -249,35 +248,29 @@ Solo la primera persona que gane este premio lo recibirá vía Yape. El resto po
 <script>
 /* ELEMENTOS */
 const video = document.getElementById("introVideo");
+const welcomeMessage = document.getElementById("welcomeMessage");
+const goFlashcardBtn = document.getElementById("goFlashcard");
 const flashcardSection = document.getElementById("flashcardSection");
+const skipBtn = document.getElementById("skipGame");
 const wheelContainer = document.getElementById("wheel-container");
 const ruletaTitle = document.getElementById("ruletaTitle");
 const ruletaMsg = document.getElementById("ruletaMsg");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
-const skipBtn = document.getElementById("skipGame");
-const introModal = document.getElementById("introModal");
-const startGameBtn = document.getElementById("startGame");
 
-/* VIDEO TERMINADO */
+/* FLUJO VIDEO -> MENSAJE */
 video.onended = () => {
-  introModal.style.display="flex";
-  // Si no interactúa, auto mostrar flashcard después de 5s
-  setTimeout(()=>{
-    if(introModal.style.display==="flex"){
-      introModal.style.display="none";
-      flashcardSection.style.display="block";
-    }
-  },5000);
+  welcomeMessage.style.display = "flex";
 };
 
-/* INICIAR JUEGO DESDE MODAL */
-startGameBtn.onclick = () => {
-  introModal.style.display="none";
-  flashcardSection.style.display="block";
+/* IR A FLASHCARD DESDE MENSAJE */
+goFlashcardBtn.onclick = () => {
+  welcomeMessage.style.display = "none";
+  flashcardSection.style.display = "block";
 };
 
-/* IR A RULETA */
+/* SALTAR FLASHCARD O CONTINUAR */
+skipBtn.onclick = goToRuleta;
 function goToRuleta(){
   flashcardSection.style.display="none";
   wheelContainer.style.display="block";
@@ -287,9 +280,6 @@ function goToRuleta(){
   bgMusic.volume = 0.6;
   bgMusic.play().catch(()=>{});
 }
-
-/* BOTÓN SALTAR JUEGO */
-skipBtn.onclick = goToRuleta;
 
 /* NIEVE + EMOJIS */
 const emojis = ["❄️","🎄","🎁","⭐","🎅"];
