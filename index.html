@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruleta Navideña</title>
 
-<!-- Fuente elegante para FELIZ NAVIDAD -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<!-- Fuente cursiva elegante -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -39,29 +39,35 @@ video{
   object-fit:cover;
 }
 
-/* MENSAJE NAVIDEÑO */
+/* MENSAJE INICIAL */
 #welcomeMessage{
   display:none;
+  width:100vw;
+  height:100vh;
   position:fixed;
-  inset:0;
-  background:linear-gradient(to bottom,#ff4d4d,#800000);
+  top:0;
+  left:0;
+  background:linear-gradient(to bottom, rgba(255,0,0,0.6), rgba(255,255,255,0.2));
   color:white;
-  z-index:2000;
+  font-family:'Pacifico', cursive;
+  font-size:32px;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  padding:20px;
-}
-#welcomeContent{
-  background:rgba(0,0,0,0.6);
-  padding:25px;
-  border-radius:15px;
-  max-width:500px;
   text-align:center;
+  z-index:3000;
 }
-#welcomeContent p{
-  font-size:20px;
-  line-height:1.4;
+#welcomeMessage button{
+  margin-top:15px;
+  padding:10px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:#f1c40f;
+  color:black;
+  font-weight:bold;
 }
 
 /* FLASHCARD */
@@ -92,7 +98,7 @@ video{
   cursor:pointer;
 }
 
-/* RULETA */
+/* WHEEL */
 #wheel-container{
   position:relative;
   width:300px;
@@ -141,7 +147,6 @@ button{
   display:flex;
   flex-direction:column;
 }
-
 #rewardText{
   background:#081a33;
   padding:15px;
@@ -153,7 +158,6 @@ button{
   overflow-y:auto;
   flex:1;
 }
-
 #claim{
   background:#2ecc71;
   color:black;
@@ -161,7 +165,7 @@ button{
   width:100%;
 }
 
-/* NIEVE / EMOJIS */
+/* ❄️ NIEVE / EMOJIS */
 .snow{
   position:fixed;
   top:-40px;
@@ -177,13 +181,13 @@ button{
   }
 }
 
-/* FELIZ NAVIDAD ELEGANTE */
+/* FELIZ NAVIDAD LLAMATIVO */
 #ruletaTitle{
   display:none;
-  font-family:'Playfair Display', serif;
-  font-size:60px;
-  color:#ff4444;
-  text-shadow:2px 2px 5px black;
+  font-family:'Pacifico', cursive;
+  font-size:50px;
+  color: red;
+  text-shadow: 2px 2px 4px white;
 }
 #ruletaMsg{display:none;}
 </style>
@@ -198,24 +202,20 @@ button{
   </video>
 </div>
 
-<!-- MENSAJE NAVIDEÑO -->
+<!-- MENSAJE INICIAL -->
 <div id="welcomeMessage">
-  <div id="welcomeContent">
-    <p>
-🎄 ¡Hola! 🎄<br>
-Jesús Patiño y su familia les desean una Feliz Navidad y un próspero Año Nuevo. 💖<br><br>
-Este es un juego divertido, pueden leer este mensaje por 15 segundos antes de continuar al "Misterio del Taller de Santa".<br>
-Si lo desean, pueden saltar el juego y pasar directamente a la Ruleta Navideña, donde hay un premio especial de 10 soles 💵.<br><br>
-¡Diviértanse y celebremos juntos! 🎁✨
-    </p>
-  </div>
+  🎄 ¡Feliz Navidad y próspero Año Nuevo! 🎄<br>
+  La familia Patiño les agradece su cariño y los invita a disfrutar de este divertido juego.<br>
+  Puedes resolver el Misterio del Taller de Santa o ir directo a girar la ruleta y ganar premios.<br>
+  🎁 ¡Atención! Solo la primera persona ganadora recibirá los 10 soles vía Yape.<br>
+  <button onclick="skipWelcome()">Saltar mensaje e ir al juego</button>
 </div>
 
 <!-- FLASHCARD -->
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
   <button id="skipGame">Saltar Juego e ir a jugar la ruleta 🚀</button>
-  <button onclick="goToRuleta()">Continuar 🎁</button>
+  <button class="btn-fixed btn-yellow" onclick="goToRuleta()">Continuar 🎁</button>
 </div>
 
 <!-- RULETA -->
@@ -243,7 +243,6 @@ Si lo desean, pueden saltar el juego y pasar directamente a la Ruleta Navideña,
 <script>
 /* ELEMENTOS */
 const video = document.getElementById("introVideo");
-const welcomeMessage = document.getElementById("welcomeMessage");
 const flashcardSection = document.getElementById("flashcardSection");
 const wheelContainer = document.getElementById("wheel-container");
 const ruletaTitle = document.getElementById("ruletaTitle");
@@ -251,16 +250,24 @@ const ruletaMsg = document.getElementById("ruletaMsg");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
 const skipBtn = document.getElementById("skipGame");
+const welcomeMessage = document.getElementById("welcomeMessage");
 
 /* VIDEO → MENSAJE 15s → FLASHCARD */
 video.onended = () => {
   video.parentElement.style.display="none";
-  welcomeMessage.style.display = "flex";
+  welcomeMessage.style.display="flex";
+
   setTimeout(()=>{
-    welcomeMessage.style.display = "none";
-    flashcardSection.style.display = "block";
+    welcomeMessage.style.display="none";
+    flashcardSection.style.display="block";
   },15000);
 };
+
+/* SALTAR MENSAJE */
+function skipWelcome(){
+  welcomeMessage.style.display="none";
+  flashcardSection.style.display="block";
+}
 
 /* IR A RULETA DESDE FLASHCARD */
 function goToRuleta(){
@@ -273,7 +280,7 @@ function goToRuleta(){
   bgMusic.play().catch(()=>{});
 }
 
-/* SALTAR FLASHCARD */
+/* SALTAR JUEGO BOTÓN */
 skipBtn.onclick = goToRuleta;
 
 /* NIEVE + EMOJIS */
@@ -293,13 +300,27 @@ const whatsappAdmin="51957811810";
 
 /* IPTV INFO */
 const IPTV_INFO = `🎬 IPTV Server Information
-🌍 M3U Link: http://tv.proyectox.vip:8080/get.php?username=Drazun23lgdh&password=q65M5nwa2A&type=m3u_plus&output=ts
-🔗 Host URL: http://tv.proyectox.vip:8080
-👤 Username: Drazun23lgdh
-🔑 Password: q65M5nwa2A
-📡 Server: http://tv.proyectox.vip:8080
-📍 Location: Unknown
-📅 Expiry: December 30, 2025 at 19:10 GMT-05:00`;
+
+🌍 M3U Link:
+http://tv.proyectox.vip:8080/get.php?username=Drazun23lgdh&password=q65M5nwa2A&type=m3u_plus&output=ts
+
+🔗 Host URL:
+http://tv.proyectox.vip:8080
+
+👤 Username:
+Drazun23lgdh
+
+🔑 Password:
+q65M5nwa2A
+
+📡 Server:
+http://tv.proyectox.vip:8080
+
+📍 Location:
+Unknown
+
+📅 Expiry:
+December 30, 2025 at 19:10 GMT-05:00`;
 
 /* PREMIOS */
 const premios=[
@@ -350,8 +371,10 @@ spinBtn.onclick=()=>{
     premioActual=premios[idx];
 
     let texto=`🎉 ¡FELICIDADES! 🎉
+
 Has ganado:
 ${premioActual.nombre}
+
 🎄 Feliz Navidad 🎄
 Jesús Patiño & Familia`;
 
@@ -381,6 +404,7 @@ ${premioActual.nombre}`;
   }
 
   msg += `
+
 Gracias 🙌
 Feliz Navidad 🎄
 Jesús Patiño & Familia`;
