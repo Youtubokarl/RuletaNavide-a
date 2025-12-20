@@ -138,6 +138,7 @@ video{
   overflow-y:auto;
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(to bottom, #020b1c, #081a33);
+  position:relative;
 }
 
 #ruletaTitle{
@@ -185,6 +186,22 @@ canvas{width:100%;height:100%;border-radius:50%}
   background:#f1c40f;
   color:black;
   font-weight:bold;
+}
+
+/* MENSAJE FLOTAANTE TIEMPO */
+#timeMessage{
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,0.2);
+  color:white;
+  font-weight:bold;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:16px;
+  display:none;
+  z-index:2000;
 }
 
 /* MODAL */
@@ -251,13 +268,14 @@ canvas{width:100%;height:100%;border-radius:50%}
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
   <button id="skipGame">Saltar Juego e ir a girar la ruleta 🚀</button>
-  
 </div>
 
 <!-- RULETA -->
 <div id="ruletaWrapper">
   <h1 id="ruletaTitle">🎄 Una Feliz Navidad y un Próspero Año Nuevo 🎄</h1>
   <p id="ruletaMsg">La familia Patiño Quintana les desea la mejor de las suertes en el juego de la ruleta.<br>Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>Suerte a todos!</p>
+  
+  <div id="timeMessage"></div>
 
   <div id="wheel-container">
     <div id="pointer"></div>
@@ -307,8 +325,9 @@ const bgMusic = document.getElementById("bgMusic");
 const inicioMusic = document.getElementById("inicioMusic");
 const skipBtn = document.getElementById("skipGame");
 const startAudioBtn = document.getElementById("startAudioBtn");
+const timeMessage = document.getElementById("timeMessage");
 
-// BOTÓN ACTIVAR MÚSICA AL INICIO
+/* BOTÓN ACTIVAR MÚSICA AL INICIO */
 startAudioBtn.onclick = () => {
   inicioMusic.volume = 0.5;
   inicioMusic.play().catch(()=>{});
@@ -331,12 +350,26 @@ video.onended = () => {
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
+
   // detener música de inicio
   inicioMusic.pause();
   inicioMusic.currentTime = 0;
+
   // iniciar música de ruleta
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
+
+  // VERIFICAR HORA PARA HABILITAR BOTÓN
+  const ahora = new Date();
+  const fechaHabil = new Date('2025-12-20T09:35:00-05:00'); // 9pm hora Perú
+  if(ahora < fechaHabil){
+    spinBtn.disabled = true;
+    timeMessage.style.display = 'block';
+    timeMessage.innerText = `⏰ Debes esperar hasta el 20 de diciembre 2025 a las 9:00 PM para girar la ruleta.`;
+  } else {
+    spinBtn.disabled = false;
+    timeMessage.style.display = 'none';
+  }
 }
 
 /* SALTAR JUEGO BOTÓN */
