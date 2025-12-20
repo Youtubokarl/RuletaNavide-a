@@ -59,8 +59,7 @@ video{
 }
 
 #introMessage p{
-  font-family: 'Dancing Script', cursive;
-  font-size:22px;
+  font-size:18px;
   line-height:1.5;
   margin:10px 0;
   color:white;
@@ -130,8 +129,8 @@ video{
 }
 
 #ruletaMsg{
-  font-family: 'Dancing Script', cursive;
-  font-size:20px;
+  font-family: 'Roboto', sans-serif;
+  font-size:18px;
   font-style:italic;
   margin-bottom:15px;
   color:white;
@@ -341,8 +340,19 @@ function dibujarRuleta(){
 }
 dibujarRuleta();
 
+/* BLOQUEO DE RULETA: SOLO UNA VEZ POR PERSONA */
+if(localStorage.getItem("ruleta_jugada")) {
+    spinBtn.disabled = true;
+    spinBtn.innerText = "Ya jugaste, lo siento";
+}
+
 /* GIRAR RULETA */
 spinBtn.onclick=()=>{
+  // Guardar que ya jugó
+  if(!localStorage.getItem("ruleta_jugada")) {
+      localStorage.setItem("ruleta_jugada", "true");
+  }
+
   const vueltas=360*(5+Math.random()*4);
   angulo+=vueltas;
   canvas.style.transition="transform 4s ease-out";
