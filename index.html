@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruleta Navideña</title>
 
-<!-- Fuente gótica/cursiva para Feliz Navidad -->
-<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+<!-- Fuente elegante y corrida para FELIZ NAVIDAD -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -17,8 +17,6 @@ body{
   text-align:center;
   overflow:hidden;
 }
-h1{margin:15px 0 5px}
-p{margin:0 0 10px}
 
 /* VIDEO */
 #videoSection{
@@ -53,7 +51,7 @@ video{
   border:none;
 }
 
-/* SALTAR JUEGO */
+/* BOTÓN SALTAR JUEGO */
 #skipGame{
   position:fixed;
   top:20px;
@@ -68,7 +66,7 @@ video{
   cursor:pointer;
 }
 
-/* WHEEL */
+/* RULETA */
 #wheel-container{
   position:relative;
   width:300px;
@@ -98,7 +96,7 @@ button{
 }
 #spin{background:#f1c40f;color:black;font-weight:bold}
 
-/* MODAL */
+/* MODAL PREMIOS */
 #modal{
   position:fixed;
   inset:0;
@@ -117,7 +115,6 @@ button{
   display:flex;
   flex-direction:column;
 }
-
 #rewardText{
   background:#081a33;
   padding:15px;
@@ -129,7 +126,6 @@ button{
   overflow-y:auto;
   flex:1;
 }
-
 #claim{
   background:#2ecc71;
   color:black;
@@ -137,7 +133,7 @@ button{
   width:100%;
 }
 
-/* ❄️ NIEVE / EMOJIS */
+/* NIEVE / EMOJIS */
 .snow{
   position:fixed;
   top:-40px;
@@ -153,13 +149,48 @@ button{
   }
 }
 
-/* FELIZ NAVIDAD LLAMATIVO */
+/* INTRO MODAL */
+#introModal{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom,#ff4d4d,#800000);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3000;
+  padding:20px;
+}
+#introModalContent{
+  background:rgba(0,0,0,0.6);
+  padding:25px;
+  border-radius:15px;
+  max-width:500px;
+  text-align:center;
+  font-family:'Great Vibes', cursive;
+}
+#introModalContent p{
+  font-size:20px;
+  line-height:1.4;
+}
+#introModalContent button{
+  margin-top:15px;
+  padding:12px 20px;
+  font-size:18px;
+  background:#f1c40f;
+  color:black;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* FELIZ NAVIDAD RULETA */
 #ruletaTitle{
   display:none;
-  font-family:'UnifrakturCook', cursive;
-  font-size:50px;
-  color: red;
-  text-shadow: 2px 2px 4px white;
+  font-family:'Great Vibes', cursive;
+  font-size:60px;
+  color:red;
+  text-shadow:2px 2px 5px white, 1px 1px 3px black;
 }
 #ruletaMsg{display:none;}
 </style>
@@ -172,6 +203,30 @@ button{
   <video id="introVideo" autoplay playsinline muted preload="auto">
     <source src="intro.mp4" type="video/mp4">
   </video>
+</div>
+
+<!-- INTRO MODAL -->
+<div id="introModal">
+  <div id="introModalContent">
+    <p>
+🎄 ¡Hola, queridos amigos! 🎄
+
+Nos llena de alegría saludarlos en esta Navidad y desearles un Feliz Año Nuevo de parte de Jesús Patiño y su familia. 💖
+
+Hemos preparado un juego muy divertido llamado "El Misterio del Taller de Santa", donde podrán participar y descubrir sorpresas increíbles.
+
+Si lo desean, pueden saltar este juego y pasar directamente a jugar la Ruleta Navideña, que incluye un premio especial de 10 soles 💵.
+
+Solo la primera persona que gane este premio recibirá la transferencia directamente vía Yape.
+Para el resto, el juego les permitirá girar la ruleta y participar con todos los demás premios.
+
+¡Diviértanse, participen y celebremos juntos esta Navidad! 🎁✨
+
+Con cariño y agradecimiento,
+Jesús Patiño & Familia ❤️
+    </p>
+    <button id="startGame">¡Vamos a jugar! 🎉</button>
+  </div>
 </div>
 
 <!-- FLASHCARD -->
@@ -204,7 +259,7 @@ button{
 </div>
 
 <script>
-/* VIDEO → FLASHCARD */
+/* ELEMENTOS */
 const video = document.getElementById("introVideo");
 const flashcardSection = document.getElementById("flashcardSection");
 const wheelContainer = document.getElementById("wheel-container");
@@ -213,13 +268,19 @@ const ruletaMsg = document.getElementById("ruletaMsg");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
 const skipBtn = document.getElementById("skipGame");
+const introModal = document.getElementById("introModal");
+const startGameBtn = document.getElementById("startGame");
 
-video.onended = () => {
-  video.parentElement.style.display="none";
+/* VIDEO TERMINADO */
+video.onended = () => { introModal.style.display="flex"; };
+
+/* INICIAR JUEGO DESDE MODAL */
+startGameBtn.onclick = () => {
+  introModal.style.display="none";
   flashcardSection.style.display="block";
 };
 
-/* IR A RULETA DESDE FLASHCARD */
+/* IR A RULETA */
 function goToRuleta(){
   flashcardSection.style.display="none";
   wheelContainer.style.display="block";
@@ -230,7 +291,7 @@ function goToRuleta(){
   bgMusic.play().catch(()=>{});
 }
 
-/* SALTAR JUEGO BOTÓN */
+/* BOTÓN SALTAR JUEGO */
 skipBtn.onclick = goToRuleta;
 
 /* NIEVE + EMOJIS */
@@ -248,7 +309,7 @@ setInterval(()=>{
 /* WHATSAPP */
 const whatsappAdmin="51957811810";
 
-/* IPTV */
+/* IPTV INFO */
 const IPTV_INFO = `🎬 IPTV Server Information
 
 🌍 M3U Link:
@@ -289,6 +350,7 @@ const c=canvas.width/2;
 let angulo=0;
 let premioActual=null;
 
+/* DIBUJAR RULETA */
 function dibujarRuleta(){
   const paso=2*Math.PI/premios.length;
   for(let i=0;i<premios.length;i++){
@@ -365,6 +427,5 @@ Jesús Patiño & Familia`;
   window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
 };
 </script>
-
 </body>
 </html>
