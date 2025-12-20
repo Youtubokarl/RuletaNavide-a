@@ -49,8 +49,6 @@ video{
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(to bottom, #900C3F, #FF5733);
   color:white;
-  position:relative;
-  z-index:10;
 }
 
 #introMessage h1{
@@ -67,8 +65,8 @@ video{
   color:white;
 }
 
-/* COPOS DE NIEVE Y EMOJIS */
-.snow{
+/* COPOS DE NIEVE INICIO */
+.snowIntro{
   position:fixed;
   top:-40px;
   font-size:22px;
@@ -120,8 +118,6 @@ video{
   overflow-y:auto;
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(to bottom, #020b1c, #081a33);
-  position:relative;
-  z-index:10;
 }
 
 #ruletaTitle{
@@ -240,8 +236,7 @@ canvas{width:100%;height:100%;border-radius:50%}
 <!-- RULETA -->
 <div id="ruletaWrapper">
   <h1 id="ruletaTitle">🎄 Una Feliz Navidad y un Próspero Año Nuevo 🎄</h1>
-  <p id="ruletaMsg">La familia Patiño les desea la mejor de las suertes en el juego de la ruleta.<br>
-  Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>Suerte a todos!</p>
+  <p id="ruletaMsg">La familia Patiño les desea la mejor de las suertes en el juego de la ruleta.<br>Recuerden que el primer y único ganador de los 10 soles es quien salga primero.<br>Suerte a todos!</p>
 
   <div id="wheel-container">
     <div id="pointer"></div>
@@ -263,25 +258,17 @@ canvas{width:100%;height:100%;border-radius:50%}
 </div>
 
 <script>
-/* COPOS DE NIEVE, REGALOS Y ÁRBOLES */
-const emojisIntro = ["❄️","🎄","🎁"];
-const emojisRuleta = ["❄️","🎄","🎁","⭐","🎅"];
-function generarEmojis(container, emojis){
-  setInterval(()=>{
-    const e = document.createElement("div");
-    e.className="snow";
-    e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-    e.style.left=Math.random()*100+"vw";
-    e.style.fontSize=(18 + Math.random()*20) + "px";
-    e.style.animationDuration=(4+Math.random()*5)+"s";
-    container.appendChild(e);
-    setTimeout(()=>e.remove(),9000);
-  },350);
-}
-
-/* Ejecutar emojis en intro y ruleta */
-generarEmojis(document.body, emojisIntro); // inicial
-// se activará de nuevo en ruleta tras mostrarla
+/* COPOS DE NIEVE MENSAJE INICIAL */
+const emojisIntro = ["❄️"];
+setInterval(()=>{
+  const e=document.createElement("div");
+  e.className="snowIntro";
+  e.innerText=emojisIntro[Math.floor(Math.random()*emojisIntro.length)];
+  e.style.left=Math.random()*100+"vw";
+  e.style.animationDuration=(4+Math.random()*5)+"s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),9000);
+},350);
 
 /* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
 const introMessage = document.getElementById("introMessage");
@@ -311,7 +298,6 @@ function goToRuleta(){
   ruletaWrapper.style.display="block";
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
-  generarEmojis(document.body, emojisRuleta); // emojis en ruleta
 }
 
 /* SALTAR JUEGO BOTÓN */
