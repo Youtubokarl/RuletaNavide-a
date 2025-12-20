@@ -38,6 +38,41 @@ video{
   object-fit:cover;
 }
 
+/* INTRO MODAL */
+#introModal{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom,#ff4d4d,#800000);
+  color:white;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:3000;
+  padding:20px;
+}
+#introModalContent{
+  background:rgba(0,0,0,0.6);
+  padding:25px;
+  border-radius:15px;
+  max-width:500px;
+  text-align:center;
+  font-family:'Great Vibes', cursive;
+}
+#introModalContent p{
+  font-size:20px;
+  line-height:1.4;
+}
+#introModalContent button{
+  margin-top:15px;
+  padding:12px 20px;
+  font-size:18px;
+  background:#f1c40f;
+  color:black;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+
 /* FLASHCARD */
 #flashcardSection{
   display:none;
@@ -50,7 +85,6 @@ video{
   height:100%;
   border:none;
 }
-
 /* BOTÓN SALTAR JUEGO */
 #skipGame{
   position:fixed;
@@ -149,46 +183,11 @@ button{
   }
 }
 
-/* INTRO MODAL */
-#introModal{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(to bottom,#ff4d4d,#800000);
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:3000;
-  padding:20px;
-}
-#introModalContent{
-  background:rgba(0,0,0,0.6);
-  padding:25px;
-  border-radius:15px;
-  max-width:500px;
-  text-align:center;
-  font-family:'Great Vibes', cursive;
-}
-#introModalContent p{
-  font-size:20px;
-  line-height:1.4;
-}
-#introModalContent button{
-  margin-top:15px;
-  padding:12px 20px;
-  font-size:18px;
-  background:#f1c40f;
-  color:black;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
 /* FELIZ NAVIDAD RULETA */
 #ruletaTitle{
   display:none;
   font-family:'Great Vibes', cursive;
-  font-size:60px;
+  font-size:70px;
   color:red;
   text-shadow:2px 2px 5px white, 1px 1px 3px black;
 }
@@ -209,21 +208,15 @@ button{
 <div id="introModal">
   <div id="introModalContent">
     <p>
-🎄 ¡Hola, queridos amigos! 🎄
+🎄 ¡Hola, queridos amigos! 🎄<br><br>
 
-Nos llena de alegría saludarlos en esta Navidad y desearles un Feliz Año Nuevo de parte de Jesús Patiño y su familia. 💖
+Jesús Patiño y su familia les desean una Feliz Navidad y un próspero Año Nuevo. 💖<br><br>
 
-Hemos preparado un juego muy divertido llamado "El Misterio del Taller de Santa", donde podrán participar y descubrir sorpresas increíbles.
+Pueden jugar el "Misterio del Taller de Santa" y descubrir sorpresas. Si lo desean, pueden saltar este juego y pasar directamente a la Ruleta Navideña, donde hay un premio especial de 10 soles 💵.<br><br>
 
-Si lo desean, pueden saltar este juego y pasar directamente a jugar la Ruleta Navideña, que incluye un premio especial de 10 soles 💵.
+Solo la primera persona que gane este premio lo recibirá vía Yape. El resto podrá participar y obtener los demás premios.<br><br>
 
-Solo la primera persona que gane este premio recibirá la transferencia directamente vía Yape.
-Para el resto, el juego les permitirá girar la ruleta y participar con todos los demás premios.
-
-¡Diviértanse, participen y celebremos juntos esta Navidad! 🎁✨
-
-Con cariño y agradecimiento,
-Jesús Patiño & Familia ❤️
+¡Diviértanse y celebremos juntos! 🎁✨
     </p>
     <button id="startGame">¡Vamos a jugar! 🎉</button>
   </div>
@@ -311,27 +304,13 @@ const whatsappAdmin="51957811810";
 
 /* IPTV INFO */
 const IPTV_INFO = `🎬 IPTV Server Information
-
-🌍 M3U Link:
-http://tv.proyectox.vip:8080/get.php?username=Drazun23lgdh&password=q65M5nwa2A&type=m3u_plus&output=ts
-
-🔗 Host URL:
-http://tv.proyectox.vip:8080
-
-👤 Username:
-Drazun23lgdh
-
-🔑 Password:
-q65M5nwa2A
-
-📡 Server:
-http://tv.proyectox.vip:8080
-
-📍 Location:
-Unknown
-
-📅 Expiry:
-December 30, 2025 at 19:10 GMT-05:00`;
+🌍 M3U Link: http://tv.proyectox.vip:8080/get.php?username=Drazun23lgdh&password=q65M5nwa2A&type=m3u_plus&output=ts
+🔗 Host URL: http://tv.proyectox.vip:8080
+👤 Username: Drazun23lgdh
+🔑 Password: q65M5nwa2A
+📡 Server: http://tv.proyectox.vip:8080
+📍 Location: Unknown
+📅 Expiry: December 30, 2025 at 19:10 GMT-05:00`;
 
 /* PREMIOS */
 const premios=[
@@ -383,10 +362,8 @@ spinBtn.onclick=()=>{
     premioActual=premios[idx];
 
     let texto=`🎉 ¡FELICIDADES! 🎉
-
 Has ganado:
 ${premioActual.nombre}
-
 🎄 Feliz Navidad 🎄
 Jesús Patiño & Familia`;
 
@@ -397,7 +374,6 @@ Jesús Patiño & Familia`;
 
     document.getElementById("rewardText").innerText=texto;
     document.getElementById("modal").style.display="flex";
-
   },4000);
 };
 
@@ -409,23 +385,4 @@ ${premioActual.nombre}`;
 
   if(premioActual.nombre==="💵 Ganaste 10 soles"){
     msg += `
-¡Por favor, pégame a este número para enviarme los soles!`;
-  } else if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
-    msg += `
-¡Quiero mi premio!`;
-  }
-
-  msg += `
-
-Gracias 🙌
-Feliz Navidad 🎄
-Jesús Patiño & Familia`;
-
-  if(premioActual.tipo === "link") msg += `\n\n${premioActual.enlace}`;
-  if(premioActual.tipo === "iptv") msg += `\n\n${IPTV_INFO}`;
-
-  window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
-};
-</script>
-</body>
-</html>
+¡
