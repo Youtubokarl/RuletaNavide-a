@@ -246,12 +246,12 @@ canvas{width:100%;height:100%;border-radius:50%}
   <button id="spin">🎡 GIRAR</button>
 </div>
 
-<!-- 🔊 MÚSICA DE INICIO (AGREGADO) -->
-<audio id="introMusic" loop autoplay>
+<!-- 🔊 MÚSICA DE INICIO (INSERTADA, NO REEMPLAZA NADA) -->
+<audio id="introMusic" loop>
   <source src="MusicaInicio.mp3" type="audio/mpeg">
 </audio>
 
-<!-- 🔊 MÚSICA RULETA (ORIGINAL) -->
+<!-- 🔊 MÚSICA DE RULETA (ORIGINAL, INTACTA) -->
 <audio id="bgMusic" loop>
   <source src="musica.mp3" type="audio/mpeg">
 </audio>
@@ -276,7 +276,7 @@ setInterval(()=>{
   setTimeout(()=>e.remove(),9000);
 },350);
 
-/* SECUENCIA */
+/* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
 const introMessage = document.getElementById("introMessage");
 const videoSection = document.getElementById("videoSection");
 const video = document.getElementById("introVideo");
@@ -284,12 +284,14 @@ const flashcardSection = document.getElementById("flashcardSection");
 const ruletaWrapper = document.getElementById("ruletaWrapper");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
-const introMusic = document.getElementById("introMusic"); // AGREGADO
+const introMusic = document.getElementById("introMusic"); // INSERTADO
 const skipBtn = document.getElementById("skipGame");
 
+/* ▶️ MÚSICA DE INICIO DESDE CARGA */
 introMusic.volume = 0.6;
 introMusic.play().catch(()=>{});
 
+// Mostrar video después de 15 segundos
 setTimeout(()=>{
   introMessage.style.display="none";
   videoSection.style.display="block";
@@ -301,21 +303,125 @@ video.onended = () => {
   flashcardSection.style.display="block";
 };
 
-/* IR A RULETA */
+/* IR A RULETA DESDE FLASHCARD */
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
 
-  introMusic.pause();          // AGREGADO
-  introMusic.currentTime = 0;  // AGREGADO
+  /* ⏹️ DETENER MÚSICA INICIAL */
+  introMusic.pause();
+  introMusic.currentTime = 0;
 
+  /* ▶️ INICIAR MÚSICA RULETA */
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 }
 
+/* SALTAR JUEGO BOTÓN */
 skipBtn.onclick = goToRuleta;
 
-/* EL RESTO DEL SCRIPT PERMANECE EXACTAMENTE IGUAL */
+/* PREMIOS */
+const premios=[
+  {nombre:"📺 IPTV Premium 6 meses",tipo:"iptv"},
+  {nombre:"📲 Magis TV Android",tipo:"contacto"},
+  {nombre:"📘 Curso de Inglés Completo",tipo:"link",enlace:"https://drive.google.com/drive/folders/1mXBer5mMfp2bsuhNnNuQEaBJj8NqoCay"},
+  {nombre:"📚 Biblioteca Virtual",tipo:"link",enlace:"https://drive.google.com/drive/folders/13_VgENw6lk4y7SdniVQFxncSkJl60zSB"},
+  {nombre:"🎁 Premio Sorpresa",tipo:"contacto"},
+  {nombre:"💵 Ganaste 10 soles",tipo:"contacto"}
+];
+
+const colores=["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6","#ff69b4"];
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+const c=canvas.width/2;
+let angulo=0;
+let premioActual=null;
+
+function dibujarRuleta(){
+  const paso=2*Math.PI/premios.length;
+  for(let i=0;i<premios.length;i++){
+    ctx.beginPath();
+    ctx.moveTo(c,c);
+    ctx.arc(c,c,c,i*paso,(i+1)*paso);
+    ctx.fillStyle=colores[i];
+    ctx.fill();
+    ctx.save();
+    ctx.translate(c,c);
+    ctx.rotate(i*paso+paso/2);
+    ctx.fillStyle="white";
+    ctx.font="bold 14px Arial";
+    ctx.textAlign="center";
+    ctx.fillText(premios[i].nombre, c-85, 5);
+    ctx.restore();
+  }
+}
+dibujarRuleta();
+
+/* BLOQUEO DE RULETA: SOLO UNA VEZ POR PERSONA */
+if(localStorage.getItem("ruleta_jugada")) {
+    spinBtn.disabled = true;
+    spinBtn.innerText = "Ya jugaste, lo siento";
+}
+
+/* GIRAR RULETA */
+spinBtn.onclick=()=>{
+  if(!localStorage.getItem("ruleta_jugada")) {
+      localStorage.setItem("ruleta_jugada", "true");
+  }
+
+  const vueltas=360*(5+Math.random()*4);
+  angulo+=vueltas;
+  canvas.style.transition="transform 4s ease-out";
+  canvas.style.transform=`rotate(${angulo}deg)`;
+
+  setTimeout(()=>{
+    const idx=Math.floor(((360-(angulo%360))%360)/(360/premios.length));
+    premioActual=premios[idx];
+
+    let texto=`🎉 ¡FELICIDADES! 🎉
+
+Has ganado:
+${premioActual.nombre}
+
+🎄 Feliz Navidad 🎄
+Jesús Patiño & Familia`;
+
+    if(premioActual.tipo==="link") texto+=`\n\n🔗 Tu acceso:\n${premioActual.enlace}`;
+    if(premioActual.tipo==="iptv") texto+=`\n\n🎬 IPTV Server Information...`;
+    if(premioActual.nombre === "💵 Ganaste 10 soles") texto += `\n\n📩 Por favor ingresa tu número de Yape para recibirlo.`;
+    if(premioActual.tipo==="contacto" && premioActual.nombre !== "💵 Ganaste 10 soles") texto+=`\n\n📩 Escríbeme y te entrego tu premio.`;
+
+    document.getElementById("rewardText").innerText=texto;
+    document.getElementById("modal").style.display="flex";
+
+  },4000);
+};
+
+/* OBTENER PREMIO / WHATSAPP */
+const whatsappAdmin="51957811810";
+document.getElementById("claim").onclick = () => {
+  let msg = `Hola 👋
+He ganado el premio:
+${premioActual.nombre}`;
+
+  if(premioActual.nombre==="💵 Ganaste 10 soles"){
+    msg += `
+¡Por favor, pégame a este número para enviarme los soles!`;
+  } else if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
+    msg += `
+¡Quiero mi premio!`;
+  }
+
+  msg += `
+
+Gracias 🙌
+Feliz Navidad 🎄
+Jesús Patiño & Familia`;
+
+  if(premioActual.tipo === "link") msg += `\n\n${premioActual.enlace}`;
+
+  window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
+};
 </script>
 </body>
 </html>
