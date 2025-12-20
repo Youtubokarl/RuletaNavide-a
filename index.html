@@ -49,6 +49,7 @@ video{
   -webkit-overflow-scrolling: touch;
   background: linear-gradient(to bottom, #900C3F, #FF5733);
   color:white;
+  position:relative;
 }
 
 #introMessage h1{
@@ -64,6 +65,24 @@ video{
   line-height:1.6;
   margin:10px 0;
   color:white;
+}
+
+/* BOTÓN ACTIVAR MÚSICA */
+#startAudioBtn{
+  position:absolute;
+  bottom:50px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:16px 32px;
+  font-size:20px;
+  font-weight:bold;
+  color:white;
+  background:linear-gradient(to right,#ff5733,#900c3f);
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
+  z-index:500;
 }
 
 /* COPOS DE NIEVE INICIO */
@@ -218,6 +237,7 @@ canvas{width:100%;height:100%;border-radius:50%}
   Recuerden que el primer y único ganador de los 10 soles es quien salga primero entre todos los participantes.<br>
   Además, deben hacerme llegar su mensaje por WhatsApp.<br>
   ¡Suerte a todos!</p>
+  <button id="startAudioBtn">🎵 Activar música</button>
 </div>
 
 <!-- VIDEO -->
@@ -231,6 +251,7 @@ canvas{width:100%;height:100%;border-radius:50%}
 <div id="flashcardSection">
   <iframe src="https://view.genially.com/68ff20bd2ebcee43c6938388"></iframe>
   <button id="skipGame">Saltar Juego e ir a jugar la ruleta 🚀</button>
+  
 </div>
 
 <!-- RULETA -->
@@ -246,12 +267,13 @@ canvas{width:100%;height:100%;border-radius:50%}
   <button id="spin">🎡 GIRAR</button>
 </div>
 
-<!-- AUDIO: inicio y ruleta -->
-<audio id="introMusic" loop preload="auto">
-  <source src="MusicaInicio.mp3" type="audio/mpeg">
-</audio>
+<!-- AUDIOS -->
 <audio id="bgMusic" loop>
   <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="inicioMusic" loop>
+  <source src="MusicaInicio.mp3" type="audio/mpeg">
 </audio>
 
 <div id="modal">
@@ -274,7 +296,7 @@ setInterval(()=>{
   setTimeout(()=>e.remove(),9000);
 },350);
 
-/* ELEMENTOS PRINCIPALES */
+/* ELEMENTOS */
 const introMessage = document.getElementById("introMessage");
 const videoSection = document.getElementById("videoSection");
 const video = document.getElementById("introVideo");
@@ -282,22 +304,16 @@ const flashcardSection = document.getElementById("flashcardSection");
 const ruletaWrapper = document.getElementById("ruletaWrapper");
 const spinBtn = document.getElementById("spin");
 const bgMusic = document.getElementById("bgMusic");
-const introMusic = document.getElementById("introMusic");
+const inicioMusic = document.getElementById("inicioMusic");
 const skipBtn = document.getElementById("skipGame");
+const startAudioBtn = document.getElementById("startAudioBtn");
 
-/* DESBLOQUEO AUDIO INICIO EN MÓVILES */
-let audioUnlocked = false;
-function unlockAudioOnce(){
-  if(audioUnlocked) return;
-  audioUnlocked = true;
-  introMusic.currentTime = 0;
-  introMusic.volume = 0.6;
-  introMusic.play().catch(()=>{});
-  document.removeEventListener("touchstart", unlockAudioOnce);
-  document.removeEventListener("click", unlockAudioOnce);
-}
-document.addEventListener("touchstart", unlockAudioOnce, { once:true });
-document.addEventListener("click", unlockAudioOnce, { once:true });
+// BOTÓN ACTIVAR MÚSICA AL INICIO
+startAudioBtn.onclick = () => {
+  inicioMusic.volume = 0.5;
+  inicioMusic.play().catch(()=>{});
+  startAudioBtn.style.display = 'none';
+};
 
 /* SECUENCIA: MENSAJE → 15s → VIDEO → FLASHCARD → RULETA */
 setTimeout(()=>{
@@ -315,12 +331,10 @@ video.onended = () => {
 function goToRuleta(){
   flashcardSection.style.display="none";
   ruletaWrapper.style.display="block";
-
-  // Detener música de inicio
-  introMusic.pause();
-  introMusic.currentTime = 0;
-
-  // Activar música de la ruleta
+  // detener música de inicio
+  inicioMusic.pause();
+  inicioMusic.currentTime = 0;
+  // iniciar música de ruleta
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 }
