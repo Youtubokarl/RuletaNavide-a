@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruleta Navideña</title>
 
-<!-- Fuente elegante/cursiva para mensaje y ruleta -->
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<!-- Fuente cursiva/elegante -->
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -15,34 +15,34 @@ body{
   background:linear-gradient(#081a33,#020b1c);
   color:white;
   text-align:center;
-  overflow:hidden;
+  overflow-x:hidden;
 }
 
-/* MENSAJE INICIAL */
-#introMessage {
+/* BLOQUE MENSAJE INICIAL */
+#welcomeMessage{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(to bottom, #ff4d4d, #ff9999);
   display:flex;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
-  position:fixed;
-  top:0; left:0;
-  width:100vw;
-  height:100vh;
-  background:linear-gradient(to bottom, #b71c1c, #f44336);
-  color:white;
-  font-family:'Great Vibes', cursive;
-  font-size:35px;
+  justify-content:center;
   padding:20px;
-  box-sizing:border-box;
-  text-align:center;
   z-index:2000;
-  overflow-y:auto;
+  overflow:hidden;
 }
-#introMessage p{
-  font-size:18px;
-  margin-top:20px;
-  font-family:Arial, sans-serif;
-  font-style:italic;
+#welcomeMessage h1{
+  font-family:'Great Vibes', cursive;
+  font-size:3rem;
+  color:red;
+  margin-bottom:20px;
+}
+#welcomeMessage p{
+  font-family:'Arial', sans-serif;
+  font-size:1rem;
+  line-height:1.4;
+  color:white;
+  max-width:90%;
 }
 
 /* VIDEO */
@@ -70,7 +70,6 @@ video{
   width:100vw;
   height:100vh;
   position:relative;
-  overflow:auto;
 }
 #flashcardSection iframe{
   width:100%;
@@ -78,46 +77,33 @@ video{
   border:none;
 }
 
-/* SALTAR JUEGO */
-#skipGame{
-  position:fixed;
-  top:20px;
-  right:20px;
-  z-index:2000;
-  padding:12px 20px;
-  font-size:16px;
-  background:red;
-  color:white;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-}
-
 /* RULETA */
-#ruletaContainer{
+#ruletaSection{
   display:none;
-  padding-bottom:50px;
+  padding:20px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling: touch;
+  height:100vh;
+  box-sizing:border-box;
 }
 #ruletaTitle{
   font-family:'Great Vibes', cursive;
-  font-size:45px;
+  font-size:3rem;
   color:red;
-  text-shadow:2px 2px 4px white;
+  margin-bottom:10px;
 }
 #ruletaMsg{
-  font-family:Arial, sans-serif;
-  font-style:italic;
+  font-family:'Arial', sans-serif;
+  font-size:1rem;
+  line-height:1.4;
   color:white;
-  font-size:18px;
-  margin-bottom:15px;
+  margin-bottom:20px;
 }
-
-/* WHEEL */
 #wheel-container{
   position:relative;
   width:300px;
   height:300px;
-  margin:20px auto;
+  margin:0 auto 20px;
 }
 canvas{width:100%;height:100%;border-radius:50%}
 #pointer{
@@ -130,7 +116,14 @@ canvas{width:100%;height:100%;border-radius:50%}
   border-right:15px solid transparent;
   border-bottom:30px solid gold;
 }
-#spin{background:#f1c40f;color:black;font-weight:bold;padding:14px 26px;border:none;border-radius:12px;cursor:pointer}
+button{
+  padding:14px 26px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+#spin{background:#f1c40f;color:black;font-weight:bold}
 
 /* MODAL */
 #modal{
@@ -190,13 +183,9 @@ canvas{width:100%;height:100%;border-radius:50%}
 <body>
 
 <!-- MENSAJE INICIAL -->
-<div id="introMessage">
-  <div id="snowIntro"></div>
+<div id="welcomeMessage">
   <h1>Una Feliz Navidad y un Próspero Año Nuevo</h1>
-  <p>La familia Patiño les desea la mejor de las suertes en el juego de la ruleta.<br>
-  Recuerden que el primer y único ganador de los 10 soles es quien salga primero entre todos los participantes.<br>
-  Y también recuerden que deben enviarme su mensaje por WhatsApp.<br>
-  ¡Suerte a todos! 🎄🎅</p>
+  <p>La familia Patiño les desea la mejor de las suertes en el juego de la ruleta. Recuerden que el primer y único ganador de los 10 soles será quien salga primero entre todos los participantes. También deben enviarme su mensaje por WhatsApp. Suerte a todos.</p>
 </div>
 
 <!-- VIDEO -->
@@ -214,11 +203,10 @@ canvas{width:100%;height:100%;border-radius:50%}
 </div>
 
 <!-- RULETA -->
-<div id="ruletaContainer">
+<div id="ruletaSection">
   <h1 id="ruletaTitle">Una Feliz Navidad y un Próspero Año Nuevo</h1>
-  <p id="ruletaMsg">La familia Patiño les desea la mejor de las suertes en el juego de la ruleta.<br>
-  Recuerden que el primer ganador de los 10 soles será quien reciba el premio vía Yape.<br>
-  ¡Suerte a todos! 🎄🎅</p>
+  <p id="ruletaMsg">La familia Patiño les desea la mejor de las suertes en el juego de la ruleta. Recuerden que el primer y único ganador de los 10 soles será quien salga primero. ¡Suerte a todos!</p>
+
   <div id="wheel-container">
     <div id="pointer"></div>
     <canvas id="wheel" width="300" height="300"></canvas>
@@ -226,10 +214,7 @@ canvas{width:100%;height:100%;border-radius:50%}
   <button id="spin">🎡 GIRAR</button>
 </div>
 
-<audio id="bgMusic" loop>
-  <source src="musica.mp3" type="audio/mpeg">
-</audio>
-
+<!-- MODAL -->
 <div id="modal">
   <div id="modal-content">
     <div id="rewardText"></div>
@@ -238,64 +223,54 @@ canvas{width:100%;height:100%;border-radius:50%}
 </div>
 
 <script>
-const introMessage = document.getElementById("introMessage");
-const video = document.getElementById("introVideo");
-const flashcardSection = document.getElementById("flashcardSection");
-const ruletaContainer = document.getElementById("ruletaContainer");
-const spinBtn = document.getElementById("spin");
-const bgMusic = document.getElementById("bgMusic");
-const skipBtn = document.getElementById("skipGame");
-
-const emojisIntro = ["❄️","🎄","🎁","🎅"];
+/* ======= COPOS DE NIEVE Y EMOJIS ======= */
+const emojisInicio = ["❄️"];
 const emojisRuleta = ["❄️","🎄","🎁","⭐","🎅"];
-const whatsappAdmin="51957811810";
-
-/* COPOS DE NIEVE MENSAJE INICIAL */
-setInterval(()=>{
+function crearEmojiRandom(lista){
   const e=document.createElement("div");
   e.className="snow";
-  e.innerText=emojisIntro[Math.floor(Math.random()*emojisIntro.length)];
+  e.innerText=lista[Math.floor(Math.random()*lista.length)];
   e.style.left=Math.random()*100+"vw";
   e.style.animationDuration=(4+Math.random()*5)+"s";
-  introMessage.appendChild(e);
+  document.body.appendChild(e);
   setTimeout(()=>e.remove(),9000);
-},350);
+}
 
-/* MENSAJE INICIAL 15 SEGUNDOS → VIDEO */
+/* Copos de nieve en mensaje inicial */
+let snowIntervalInicio = setInterval(()=>crearEmojiRandom(emojisInicio),350);
+
+/* ==================================== */
+/* VIDEO → FLASHCARD → RULETA */
+const video = document.getElementById("introVideo");
+const flashcardSection = document.getElementById("flashcardSection");
+const ruletaSection = document.getElementById("ruletaSection");
+const welcomeMessage = document.getElementById("welcomeMessage");
+const spinBtn = document.getElementById("spin");
+const skipBtn = document.getElementById("skipGame");
+
+video.pause();
+video.style.display="none";
+
+/* Después de 15 segundos del mensaje de bienvenida, inicia video */
 setTimeout(()=>{
-  introMessage.style.display="none";
-  document.getElementById("videoSection").style.display="flex";
+  welcomeMessage.style.display="none";
+  video.style.display="flex";
+  video.play().catch(()=>{});
+  clearInterval(snowIntervalInicio);
 },15000);
-
-/* VIDEO → FLASHCARD */
-video.onended = () => {
-  video.parentElement.style.display="none";
-  flashcardSection.style.display="block";
-};
 
 /* IR A RULETA DESDE FLASHCARD */
 function goToRuleta(){
   flashcardSection.style.display="none";
-  ruletaContainer.style.display="block";
-  bgMusic.volume = 0.6;
-  bgMusic.play().catch(()=>{});
-
-  /* COPOS DE NIEVE RULETA */
-  setInterval(()=>{
-    const e=document.createElement("div");
-    e.className="snow";
-    e.innerText=emojisRuleta[Math.floor(Math.random()*emojisRuleta.length)];
-    e.style.left=Math.random()*100+"vw";
-    e.style.animationDuration=(4+Math.random()*5)+"s";
-    document.body.appendChild(e);
-    setTimeout(()=>e.remove(),9000);
-  },350);
+  ruletaSection.style.display="block";
+  // Copos y emojis en ruleta
+  setInterval(()=>crearEmojiRandom(emojisRuleta),350);
 }
 
-/* SALTAR JUEGO */
+/* SALTAR JUEGO BOTÓN */
 skipBtn.onclick = goToRuleta;
 
-/* PREMIOS */
+/* ===== PREMIOS ===== */
 const premios=[
   {nombre:"📺 IPTV Premium 6 meses",tipo:"iptv"},
   {nombre:"📲 Magis TV Android",tipo:"contacto"},
@@ -312,7 +287,6 @@ const c=canvas.width/2;
 let angulo=0;
 let premioActual=null;
 
-/* DIBUJAR RULETA */
 function dibujarRuleta(){
   const paso=2*Math.PI/premios.length;
   for(let i=0;i<premios.length;i++){
@@ -333,8 +307,10 @@ function dibujarRuleta(){
 }
 dibujarRuleta();
 
-/* GIRAR RULETA */
+/* ===== GIRAR RULETA ===== */
 spinBtn.onclick=()=>{
+  if(localStorage.getItem("ruleta_jugada")) return alert("Ya jugaste 🎁");
+
   const vueltas=360*(5+Math.random()*4);
   angulo+=vueltas;
   canvas.style.transition="transform 4s ease-out";
@@ -353,30 +329,34 @@ ${premioActual.nombre}
 Jesús Patiño & Familia`;
 
     if(premioActual.tipo==="link") texto+=`\n\n🔗 Tu acceso:\n${premioActual.enlace}`;
-    if(premioActual.tipo==="iptv") texto+=`\n\nIPTV info aquí`;
-    if(premioActual.nombre === "💵 Ganaste 10 soles") texto += `\n\n📩 Por favor ingresa tu número de Yape para recibirlo.`;
-    if(premioActual.tipo==="contacto" && premioActual.nombre !== "💵 Ganaste 10 soles") texto+=`\n\n📩 Escríbeme y te entrego tu premio.`;
+    if(premioActual.tipo==="iptv") texto+=`\n\n🎬 IPTV Info\n${premioActual.enlace || ''}`;
+    if(premioActual.tipo==="contacto" && premioActual.nombre!=="💵 Ganaste 10 soles") texto+=`\n\n📩 Escríbeme y te entrego tu premio.`;
+    if(premioActual.nombre==="💵 Ganaste 10 soles") texto+=`\n\n📩 Ingresa tu número de Yape para recibirlo.`;
 
     document.getElementById("rewardText").innerText=texto;
     document.getElementById("modal").style.display="flex";
+
+    localStorage.setItem("ruleta_jugada","true");
+    spinBtn.disabled=true;
+    spinBtn.innerText="Ya jugaste 🎁";
   },4000);
 };
 
-/* OBTENER PREMIO / WHATSAPP */
+/* ===== OBTENER PREMIO / WHATSAPP ===== */
 document.getElementById("claim").onclick = () => {
   let msg = `Hola 👋
 He ganado el premio:
 ${premioActual.nombre}`;
 
-  if(premioActual.nombre==="💵 Ganaste 10 soles"){
-    msg += `\n¡Por favor, pégame a este número para enviarme los soles!`;
-  } else {
+  if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
     msg += `\n¡Quiero mi premio!`;
   }
 
   msg += `\n\nGracias 🙌\nFeliz Navidad 🎄\nJesús Patiño & Familia`;
 
-  window.location.href = "https://wa.me/" + whatsappAdmin + "?text=" + encodeURIComponent(msg);
+  if(premioActual.tipo === "link") msg += `\n\n${premioActual.enlace}`;
+
+  window.location.href = "https://wa.me/51957811810?text=" + encodeURIComponent(msg);
 };
 </script>
 
