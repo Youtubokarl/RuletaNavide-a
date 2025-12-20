@@ -359,7 +359,7 @@ function goToRuleta(){
   bgMusic.volume=0.6;
   bgMusic.play().catch(()=>{});
 
-  // VERIFICAR HORA PARA HABILITAR BOTÓN
+  /* VERIFICAR HORA PARA HABILITAR BOTÓN
   const ahora = new Date();
   const fechaHabil = new Date('2025-12-20T21:00:00-05:00'); // 9pm hora Perú
   if(ahora < fechaHabil){
@@ -370,14 +370,14 @@ function goToRuleta(){
     spinBtn.disabled = false;
     timeMessage.style.display = 'none';
   }
-}
+}*/
 
 /* SALTAR JUEGO BOTÓN */
 skipBtn.onclick = goToRuleta;
 
 /* PREMIOS */
 const premios=[
-  {nombre:"📺 IPTV Premium 6 meses",tipo:"iptv"},
+  {nombre:"📺 IPTV Premium 1 mes",tipo:"iptv"},
   {nombre:"📲 Magis TV Android",tipo:"contacto"},
   {nombre:"📘 Curso de Inglés Completo",tipo:"link",enlace:"https://drive.google.com/drive/folders/1mXBer5mMfp2bsuhNnNuQEaBJj8NqoCay"},
   {nombre:"📚 Biblioteca Virtual",tipo:"link",enlace:"https://drive.google.com/drive/folders/13_VgENw6lk4y7SdniVQFxncSkJl60zSB"},
@@ -461,7 +461,7 @@ ${premioActual.nombre}`;
 
   if(premioActual.nombre==="💵 Ganaste 10 soles"){
     msg += `
-¡Por favor, pégame a este número para enviarme los soles!`;
+¡Por favor, págame a este número el premio de 10 los soles!`;
   } else if (premioActual.nombre === "🎁 Premio Sorpresa" || premioActual.nombre === "📲 Magis TV Android") {
     msg += `
 ¡Quiero mi premio!`;
