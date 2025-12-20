@@ -29,8 +29,7 @@ p{margin:0 0 10px}
   position:fixed;
   top:0;
   left:0;
-  background: url('https://i.ibb.co/7j8f3jv/fondo-navidad.jpg') no-repeat center center;
-  background-size:cover;
+  background: linear-gradient(to bottom, #b71c1c, #f44336); /* Fondo rojo navideño */
   color:white;
   font-family:'Pacifico', cursive;
   flex-direction:column;
@@ -42,13 +41,14 @@ p{margin:0 0 10px}
   box-sizing:border-box;
 }
 #welcomeContent{
-  font-size:3.5vw; /* 30% menor que antes */
-  line-height:1.3;
-  max-height:70vh;
+  font-size:5vw; /* Fuente más grande */
+  line-height:1.4;
+  max-height:80vh;
   overflow-y:auto;
-  background: rgba(0,0,0,0.5);
-  padding:20px;
-  border-radius:15px;
+  background: rgba(255,255,255,0.1); /* Cuadro semitransparente */
+  padding:25px;
+  border-radius:20px;
+  color:white;
 }
 #welcomeMessage button{
   margin-top:20px;
